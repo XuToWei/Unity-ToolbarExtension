@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+#if UNITY_6000_3_OR_NEWER
+using UnityEditor.Toolbars;
+#endif
 
 namespace ToolbarExtension
 {
