@@ -14,6 +14,25 @@ namespace ToolbarExtension
         static ToolbarHelper()
         {
 #if !UNITY_6000_3_OR_NEWER
+            var customType = typeof(MainToolbarButton).Assembly.GetType("UnityEditor.Toolbars.MainToolbarCustom");
+            Activator.CreateInstance(customType, new object[]
+            {
+                () =>
+                {
+                    var container = new IMGUIContainer(() => ToolbarHelper.GUILeft());
+                    container.style.flexGrow = 1;
+                    container.style.flexDirection = FlexDirection.Row;
+                    return container;
+                },
+                () =>
+                {
+                    var container = new IMGUIContainer(() => ToolbarHelper.GUIRight());
+                    container.style.flexGrow = 1;
+                    container.style.flexDirection = FlexDirection.Row;
+                    return container;
+                }
+            });
+#else
             ToolbarCallback.OnToolbarGUILeft = GUILeft;
             ToolbarCallback.OnToolbarGUIRight = GUIRight;
 #endif
