@@ -13,7 +13,7 @@ namespace ToolbarExtension
 
         static ToolbarHelper()
         {
-#if !UNITY_6000_3_OR_NEWER
+#if UNITY_6000_3_OR_NEWER
             var customType = typeof(MainToolbarButton).Assembly.GetType("UnityEditor.Toolbars.MainToolbarCustom");
             Activator.CreateInstance(customType, new object[]
             {
