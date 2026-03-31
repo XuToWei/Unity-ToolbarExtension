@@ -6,17 +6,19 @@ using UnityEngine;
 namespace ToolbarExtension
 {
     [InitializeOnLoad]
-    internal static class ToolbarExtension
+    internal static class ToolbarHelper
     {
         private static readonly List<(int, Action)> s_LeftToolbarGUI = new List<(int, Action)>();
         private static readonly List<(int, Action)> s_RightToolbarGUI = new List<(int, Action)>();
 
-        static ToolbarExtension()
+        static ToolbarHelper()
         {
+#if !UNITY_6000_3_OR_NEWER
             ToolbarCallback.OnToolbarGUILeft = GUILeft;
             ToolbarCallback.OnToolbarGUIRight = GUIRight;
+#endif
             Type attributeType = typeof(ToolbarAttribute);
-            
+
             foreach (var methodInfo in TypeCache.GetMethodsWithAttribute<ToolbarAttribute>())
             {
                 var attributes = methodInfo.GetCustomAttributes(attributeType, false);
@@ -45,7 +47,7 @@ namespace ToolbarExtension
             s_RightToolbarGUI.Sort((tuple1, tuple2) => tuple2.Item1 - tuple1.Item1);
         }
 
-        static void GUILeft()
+        internal static void GUILeft()
         {
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
@@ -57,7 +59,7 @@ namespace ToolbarExtension
             GUILayout.EndHorizontal();
         }
 
-        static void GUIRight()
+        internal static void GUIRight()
         {
             GUILayout.BeginHorizontal();
             foreach (var handler in s_RightToolbarGUI)

@@ -1,15 +1,52 @@
 using System;
 using UnityEngine;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine.UIElements;
+#if UNITY_6000_3_OR_NEWER
+using UnityEditor.Toolbars;
+#else
+using UnityEditor;
+#endif
 
 namespace ToolbarExtension
 {
+#if UNITY_6000_3_OR_NEWER
+    internal static class ToolbarCallback
+    {
+        private static MainToolbarElement CreateCustomElement(Func<VisualElement> createElement)
+        {
+            var customType = typeof(MainToolbarButton).Assembly.GetType("UnityEditor.Toolbars.MainToolbarCustom");
+            return (MainToolbarElement)Activator.CreateInstance(customType, new object[] { createElement });
+        }
+
+        [MainToolbarElement("ToolbarExtension/Left", defaultDockPosition = MainToolbarDockPosition.Left)]
+        static MainToolbarElement CreateLeftElement()
+        {
+            return CreateCustomElement(() =>
+            {
+                var container = new IMGUIContainer(() => ToolbarHelper.GUILeft());
+                container.style.flexGrow = 1;
+                container.style.flexDirection = FlexDirection.Row;
+                return container;
+            });
+        }
+
+        [MainToolbarElement("ToolbarExtension/Right", defaultDockPosition = MainToolbarDockPosition.Right)]
+        static MainToolbarElement CreateRightElement()
+        {
+            return CreateCustomElement(() =>
+            {
+                var container = new IMGUIContainer(() => ToolbarHelper.GUIRight());
+                container.style.flexGrow = 1;
+                container.style.flexDirection = FlexDirection.Row;
+                return container;
+            });
+        }
+    }
+#else
     internal static class ToolbarCallback
     {
         static readonly Type m_toolbarType = typeof(Editor).Assembly.GetType("UnityEditor.Toolbar");
-        
 
         public static Action OnToolbarGUILeft;
         public static Action OnToolbarGUIRight;
@@ -83,4 +120,5 @@ namespace ToolbarExtension
             }
         }
     }
+#endif
 }
